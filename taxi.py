@@ -1,5 +1,5 @@
 import math
-import numpy
+import numpy np
 import heapq
 
 # a data container object for the taxi's internal list of fares. This
@@ -475,7 +475,46 @@ class Taxi:
           Bid = CloseEnough and Worthwhile
           return Bid
 
-
-
-
-
+#Modification
+    def _bidOnFare(self, time)
+    
+    
+    #Estimate route time and distance
+        if self._no_traffic:
+            time, dist = self._route_time_dist(fare) #fixed edge weigh
+        else
+            time, dist = self._sample_route_time_dist(fare) #sample from probability distributions
+            
+    # Expected fare revenue
+    fare_revenue = fare.price
+    
+    #Expected costs
+    wait_cost = (fare.wait_time - time) * WAIT_PENALTY
+    drive_cost = (time + dist) * OPERATING_COST
+    
+    #Calculate expected profit
+    expected_profit = fare_revenue - wait_cost - drive_cost
+    
+    #Add random noise
+    noise = np.random.normal(0, expected_profit/2)
+    expected_proif += noise
+    
+    # Bid if profit is positive
+    if expected_profit > 0:
+        return True #Bid
+    else:
+        return False # Don't bid 
+    
+    #Analysis
+    profits = []
+    for i in range(3):
+        
+        #Run bidding simulation 
+        simulate_day()
+        
+        #Get actual profit
+        actual = sum(fare_revenue - wait_cost - drive_cost)
+        profits.append((actual, expressed_profit))
+        
+        print(profits)
+        

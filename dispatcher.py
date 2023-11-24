@@ -214,12 +214,37 @@ class Dispatcher:
     bidders = self.fareBoard[origin][destination][time].bidders
     
     # Map taxi which will be estimated pickup time
+    etas = {}
     
+    for taxi_id in bidders: #taxi_id will be checked
+        
+        taxi = self._taxis[taxi_id]
+        taxi_loc = taxi.location
+        
+        #A* search to estimate route time
+        pickup_time = self._estimate_route_time(taxi_loc, origin)
+        
+        etax[taxi] = pickup_time
+        
+    #Sort by time
+    sorted_etas = sorted(etas.items(), key = lambda x: x[1])
     
+    #No valid bidders
+    if not sorted_etas:
+        return
     
+    #Select taxi with minimum time
+    winning_taxi, eta = sorted_etas[0]
     
+    #Break ties based on fairness scores
+    if len(sorted_etas) > 1:
+        scores = self._normalize_fare_counts()
+        winning_taxi = min(sorted_etas, key = lambda x: scores[x[0]])
     
+    #Assign fare
+    self._fareBoard[origin][destination][time].taxi = winning_taxi
     
+    self._parent.allocateFare(origin, winning_taxi)
     
     
       # TODO - improve costing
@@ -267,4 +292,43 @@ class Dispatcher:
                                 self._fareBoard[origin][destination][time].taxi = allocatedTaxi     
                                 self._parent.allocateFare(origin,self._taxis[allocatedTaxi])
      
+    
+    
+    # Question 3 - c
+    
+import probabilistic as pr #that should be on top of the code
 
+    
+    def _costFare(self, fare):
+        
+        #Get origin node
+        origin = self._map[fare.origin]
+        
+        #Estimate wait time tolerance distribution
+        wait_time_dist = self._estimate_wait_time(origin)
+        
+        #Sample wait time for this area
+        sample_waits = wait_time_dist.sample(100)
+        
+        #Estimate pickup ETA
+        pickup_dist = self._estimate_pickup_eta(origin)
+        
+        #Sample pickup time
+        sample_etas = pickup_dist.sample(100)
+        
+        #Calculate probability of wait time
+        p_accept = pr.P(sample_etas < sample_waits)
+        
+        #Set cost to maximise acceptance probability        
+        
+        if p_accept < 0.8:
+            return fare.expected_price * 0.5  
+        elif p_accept < 0.95:
+            return fare.expected_price * 0.8
+        
+        else:
+            return fare.expected_price
+        
+
+
+        
