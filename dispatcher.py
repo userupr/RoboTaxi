@@ -187,28 +187,28 @@ class Dispatcher:
     
     # Question 2
     
-    def _costFare(self,fare):
+def _costFare(self,fare):
         
         time, dist = self._estimate_route(fare.origin, fare.destination)
         
-        base_cost = time * TIME_RATE + dist + DISTANCE_RACE
+        base_cost = time + TIME_RAE + dist + DISTANCE_RACE
     
     #Apply surge modifiers - Dynamic pricing
-    surge = 1.0
+        surge = 1.0
     
-    if self.high_demand(fare.origin):
-        surge *= 1.2
+        if self.high_demand(fare.origin):
+            surge *= 1.2
         
-    if self.low_supply(fare.origin):
-        surge *=0.9
+        if self.low_supply(fare.origin):
+            surge *=0.9
     
-    if self._is._peak(fare.time):
-        surge *= 1.1
+        if self._is._peak(fare.time):
+            surge *= 1.1
         
-    return base_cost * surge
+        return base_cost * surge
     
     
-    def _allocateFare(self, origin, destination, time)
+def _allocateFare(self, origin, destination, time):
     
     # Get list of bidding taxis
     bidders = self.fareBoard[origin][destination][time].bidders
@@ -248,7 +248,7 @@ class Dispatcher:
     
     
       # TODO - improve costing
-      def _costFare(self, fare):
+def _costFare(self, fare):
           timeToDestination = self._parent.travelTime(self._parent.getNode(fare.origin[0],fare.origin[1]),
                                                       self._parent.getNode(fare.destination[0],fare.destination[1]))
           # if the world is gridlocked, a flat fare applies.
@@ -261,7 +261,7 @@ class Dispatcher:
       # scheme: taxis can (and do!) get starved for fares, simply because they happen to be far away from the
       # action. You should be able to do better than this. After balancing allocations, try to optimise which
       # fares are allocated to which taxi (or indeed to any taxi at all!)
-      def _allocateFare(self, origin, destination, time):
+def _allocateFare(self, origin, destination, time):
            # a very simple approach here gives taxis at most 5 ticks to respond, which can
            # surely be improved upon.
           if self._parent.simTime-time > 5:
@@ -284,13 +284,13 @@ class Dispatcher:
                           if winnerNode is None or self._parent.distance2Node(bidderNode,fareNode) < self._parent.distance2Node(winnerNode,fareNode):
                              allocatedTaxi = taxiIdx
                              winnerNode = bidderNode
-                          else:
+
                              # and after all that, we still have to check that somebody won, because any of the other reasons to invalidate
                              # the auction may have occurred.
-                             if allocatedTaxi >= 0:
-                                # but if so, allocate the taxi.
-                                self._fareBoard[origin][destination][time].taxi = allocatedTaxi     
-                                self._parent.allocateFare(origin,self._taxis[allocatedTaxi])
+                    if allocatedTaxi >= 0:
+                        # but if so, allocate the taxi.
+                        self._fareBoard[origin][destination][time].taxi = allocatedTaxi     
+                        self._parent.allocateFare(origin,self._taxis[allocatedTaxi])
      
     
     
@@ -298,8 +298,7 @@ class Dispatcher:
     
 import probabilistic as pr #that should be on top of the code
 
-    
-    def _costFare(self, fare):
+def _costFare(self, fare):
         
         #Get origin node
         origin = self._map[fare.origin]

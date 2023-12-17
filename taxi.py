@@ -1,5 +1,5 @@
 import math
-import numpy np
+import numpy as np
 import heapq
 
 # a data container object for the taxi's internal list of fares. This
@@ -171,11 +171,6 @@ class Taxi:
       # can collect fares using pickupFare, drop them off using dropoffFare, bid for fares issued by the Dispatcher
       # using transmitFareBid, and any other internal activity seen as potentially useful. 
       def clockTick(self, world):
-          # automatically go off duty if we have absorbed as much loss as we can in a day
-          if self._account <= 0 and self._passenger is None:
-             print("Taxi {0} is going off-duty".format(self.number))
-             self.onDuty = False
-             self._offDutyTime = self._world.simTime
           # have we reached our last known destination? Decide what to do now.
           if len(self._path) == 0:
              # obviously, if we have a fare aboard, we expect to have reached their destination,
@@ -186,8 +181,14 @@ class Taxi:
                 # failure to drop off means probably we're not at the destination. But check
                 # anyway, and replan if this is the case.
                 elif self._passenger.destination != self._loc.index:
-                   self._path = self._planPath(self._loc.index, self._passenger.destination)
-                   
+                  self._path = self._planPath(self._loc.index, self._passenger.destination)
+                    # automatically go off duty if we have absorbed as much loss as we can in a day
+
+          if self._account <= 0 and self._passenger is None:
+             print("Taxi {0} is going off-duty".format(self.number))
+             self.onDuty = False
+             self._offDutyTime = self._world.simTime         
+
           # decide what to do about available fares. This can be done whenever, but should be done
           # after we have dropped off fares so that they don't complicate decisions.
           faresToRemove = []
@@ -329,9 +330,9 @@ class Taxi:
       '''
 # 1 a+b
         
-    from heapq, import heappush, heappop
+from heapq import heappush, heappop
     
-    def _planPath(self, origin, destination): 
+def _planPath(self, origin, destination): 
         
         # Build graph of road network - Construct graph
         graph = {}
@@ -360,7 +361,7 @@ class Taxi:
                 
                 # Construct path backward and return
                 path = []
-                while node is not None
+                while node is not None:
                     path.append(node)
                     node = visited[node] # came_from or visited   
                 return path[::-1]
@@ -369,11 +370,11 @@ class Taxi:
             
             # Get neighbors
             for neighbor, cost in graph[node].items():
-                if neighbor not in visited
+                if neighbor not in visited:
                 # Calculate heuristics
-                g = f + cost
-                h = euclidean_distance(neighbor destination)
-                f = g + h
+                  g = f + cost
+                  h = euclidean_distance (neighbor, destination)
+                  f = g + h
                 
                 # Add to queue
                 heapq.heappush(queue, (f, neighbor))
@@ -385,10 +386,10 @@ class Taxi:
         
 # 1 c
 
-    import random
+import random
     
     # Probabilistic path planning
-    def _planPath(self, origin, destination):
+def _planPath(self, origin, destination):
         
         # Build graph
         graph = []
@@ -399,15 +400,15 @@ class Taxi:
                 
         
         # Add uncertainty
-        deviation = random.gauss(0, time/4)
-        neighbors[neighbor] = time + deviation
+            deviation = random.gauss(0, time/4)
+            neighbors[neighbor] = time + deviation
         
-    graph[node] = neighbors
+            graph[node] = neighbors
     
     # 1 a-b A* using expected time on edge weights
     # A* implementation from previous response
     
-    return best_probabilistic_path
+            return best_probabilistic_path
         
         
         
@@ -415,7 +416,7 @@ class Taxi:
       # this function should build your route and fill the _path list for each new
       # journey. Below is a naive depth-first search implementation. You should be able
       # to do much better than this!
-      def _planPath(self, origin, destination, **args):
+def _planPath(self, origin, destination, **args):
           # the list of explored paths. Recursive invocations pass in explored as a parameter
           if 'explored' not in args:
              args['explored'] = {}
@@ -454,12 +455,12 @@ class Taxi:
       # may seem relevant to decide whether to bid. The (crude) constraint-satisfaction method below is only intended as
       # a hint that maybe some form of CSP solver with automated reasoning might be a good way of implementing this. But
       # other methodologies could work well. For best results you will almost certainly need to use probabilistic reasoning.
-      def _bidOnFare(self, time, origin, destination, price):
+def _bidOnFare(self, time, origin, destination, price):
           NoCurrentPassengers = self._passenger is None
           NoAllocatedFares = len([fare for fare in self._availableFares.values() if fare.allocated]) == 0
           TimeToOrigin = self._world.travelTime(self._loc, self._world.getNode(origin[0], origin[1]))
           TimeToDestination = self._world.travelTime(self._world.getNode(origin[0], origin[1]),
-                                                     self._world.getNode(destination[1], destination[1]))
+                                                     self._world.getNode(destination[0], destination[1]))
           FiniteTimeToOrigin = TimeToOrigin > 0
           FiniteTimeToDestination = TimeToDestination > 0
           CanAffordToDrive = self._account > TimeToOrigin
@@ -476,45 +477,45 @@ class Taxi:
           return Bid
 
 #Modification
-    def _bidOnFare(self, time)
+def _bidOnFare(self, time):
     
     
     #Estimate route time and distance
-        if self._no_traffic:
+         if self._no_traffic:
             time, dist = self._route_time_dist(fare) #fixed edge weigh
-        else
+         else:
             time, dist = self._sample_route_time_dist(fare) #sample from probability distributions
             
     # Expected fare revenue
-    fare_revenue = fare.price
+         fare_revenue = fare.price
     
     #Expected costs
-    wait_cost = (fare.wait_time - time) * WAIT_PENALTY
-    drive_cost = (time + dist) * OPERATING_COST
+         wait_cost = (fare.wait_time - time) * WAIT_PENALTY
+         drive_cost = (time + dist) * OPERATING_COST
     
     #Calculate expected profit
-    expected_profit = fare_revenue - wait_cost - drive_cost
+         expected_profit = fare_revenue - wait_cost - drive_cost
     
     #Add random noise
-    noise = np.random.normal(0, expected_profit/2)
-    expected_proif += noise
+         noise = np.random.normal(0, expected_profit/2)
+         expected_profit += noise
     
     # Bid if profit is positive
-    if expected_profit > 0:
-        return True #Bid
-    else:
-        return False # Don't bid 
+         if expected_profit > 0:
+            return True #Bid
+         else:
+            return False # Don't bid 
     
     #Analysis
-    profits = []
-    for i in range(3):
+         profits = []
+         for i in range(3):
         
         #Run bidding simulation 
-        simulate_day()
+            simulate_day()
         
         #Get actual profit
-        actual = sum(fare_revenue - wait_cost - drive_cost)
-        profits.append((actual, expressed_profit))
+            actual = sum(fare_revenue - wait_cost - drive_cost)
+            profits.append((actual, expressed_profit))
         
-        print(profits)
+         print(profits)
         
